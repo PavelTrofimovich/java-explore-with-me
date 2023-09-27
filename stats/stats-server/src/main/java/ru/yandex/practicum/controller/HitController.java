@@ -10,14 +10,11 @@ import ru.yandex.practicum.ViewStats;
 import ru.yandex.practicum.service.HitService;
 
 import javax.validation.Valid;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 public class HitController {
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     private final HitService hitService;
 
     @PostMapping("/hit")
