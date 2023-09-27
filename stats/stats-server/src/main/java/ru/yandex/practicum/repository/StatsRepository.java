@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface StatRepository extends JpaRepository<EndpointHit, Integer> {
+public interface StatsRepository extends JpaRepository<EndpointHit, Integer> {
     @Query("SELECT NEW ru.yandex.practicum.ViewStats(H.app, H.uri, COUNT (H.ip) AS hits) " +
             "FROM ru.yandex.practicum.model.EndpointHit AS H " +
             "WHERE (H.timestamp BETWEEN :start AND :end) AND H.uri IN (:uris) " +

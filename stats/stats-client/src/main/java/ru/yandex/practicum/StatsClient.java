@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class    StatisticsClient extends BaseClient {
+public class StatsClient extends BaseClient {
     @Autowired
-    public StatisticsClient(@Value("${statistics-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
@@ -23,8 +23,8 @@ public class    StatisticsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> saveStatistics(EndpointHitDto endpointHitDto) {
-        return post(endpointHitDto);
+    public void saveStatistics(EndpointHitDto endpointHitDto) {
+        post(endpointHitDto);
     }
 
     public ResponseEntity<Object> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris,

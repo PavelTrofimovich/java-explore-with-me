@@ -7,7 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.EndpointHitDto;
 import ru.yandex.practicum.ViewStats;
 import ru.yandex.practicum.mapper.Mapper;
-import ru.yandex.practicum.repository.StatRepository;
+import ru.yandex.practicum.model.EndpointHit;
+import ru.yandex.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,13 +20,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class HitServiceImpl implements HitService {
-    private final StatRepository statRepository;
+    private final StatsRepository statRepository;
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Transactional
     @Override
-    public void saveHit(EndpointHitDto endpointHitDto) {
-        statRepository.save(Mapper.toEndpointHit(endpointHitDto));
+    public EndpointHit saveHit(EndpointHitDto endpointHitDto) {
+        return statRepository.save(Mapper.toEndpointHit(endpointHitDto));
     }
 
     @Transactional(readOnly = true)
