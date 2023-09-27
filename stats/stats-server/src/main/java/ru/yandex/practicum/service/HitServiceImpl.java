@@ -40,10 +40,12 @@ public class HitServiceImpl implements HitService {
             startTimeFormat = LocalDateTime.parse(start, DTF);
             endTimeFormat = LocalDateTime.parse(end, DTF);
         } catch (DateTimeParseException e) {
+            log.error("Неверный формат дат");
             throw new TimeParseException("Неверный формат дат");
         }
 
         if (startTimeFormat.isAfter(endTimeFormat)) {
+            log.error("Начальная дата не может быть позже конечной");
             throw new InvalidValidationException("Начальная дата не может быть позже конечной");
         }
 
