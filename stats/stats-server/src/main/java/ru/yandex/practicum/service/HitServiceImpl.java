@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.EndpointHitDto;
 import ru.yandex.practicum.ViewStats;
+import ru.yandex.practicum.exceptions.InvalidValidationException;
+import ru.yandex.practicum.exceptions.TimeParseException;
 import ru.yandex.practicum.mapper.Mapper;
 import ru.yandex.practicum.model.EndpointHit;
 import ru.yandex.practicum.repository.StatsRepository;
@@ -38,11 +40,11 @@ public class HitServiceImpl implements HitService {
             startTimeFormat = LocalDateTime.parse(start, DTF);
             endTimeFormat = LocalDateTime.parse(end, DTF);
         } catch (DateTimeParseException e) {
-            return null;//throw new RuntimeException("Неверный формат дат");
+            throw new TimeParseException("Неверный формат дат");
         }
 
         if (startTimeFormat.isAfter(endTimeFormat)) {
-            //throw new InvalidValidationException("Start time must be before end time!");
+            throw new InvalidValidationException("Начальная дата не может быть позже конечной");
         }
 
         if (uris == null || uris.isEmpty()) {
