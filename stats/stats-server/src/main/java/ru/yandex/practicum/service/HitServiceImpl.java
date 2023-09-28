@@ -7,23 +7,18 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.EndpointHitDto;
 import ru.yandex.practicum.ViewStats;
 import ru.yandex.practicum.exceptions.InvalidValidationException;
-import ru.yandex.practicum.exceptions.TimeParseException;
 import ru.yandex.practicum.mapper.Mapper;
 import ru.yandex.practicum.model.EndpointHit;
 import ru.yandex.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class HitServiceImpl implements HitService {
     private final StatsRepository statRepository;
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Transactional
     @Override
@@ -33,43 +28,23 @@ public class HitServiceImpl implements HitService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ViewStats> getStatistics(String start, String end, List<String> uris, Boolean unique) {
-        LocalDateTime startTimeFormat;
-        LocalDateTime endTimeFormat;
-        try {
-            startTimeFormat = LocalDateTime.parse(start, DTF);
-            endTimeFormat = LocalDateTime.parse(end, DTF);
-        } catch (DateTimeParseException e) {
-            log.error("Неверный формат дат");
-            throw new TimeParseException("Неверный формат дат");
-        }
-
-        if (startTimeFormat.isAfter(endTimeFormat)) {
+    public List<ViewStats> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (start.isAfter(end)) {
             log.error("Начальная дата не может быть позже конечной");
             throw new InvalidValidationException("Начальная дата не может быть позже конечной");
         }
 
         if (uris == null || uris.isEmpty()) {
             if (Boolean.TRUE.equals(unique)) {
-                return statRepository.findUniqueStatsForAll(startTimeFormat, endTimeFormat)
-                        .stream()
-                        .map(viewStats -> new ViewStats(viewStats.getApp(), viewStats.getUri(), viewStats.getHits()))
-                        .collect(Collectors.toList());
+                return statRepository.findUniqueStatsForAll(start, end);
             } else {
-                return statRepository.findStatsForAll(startTimeFormat, endTimeFormat)
-                        .stream()
-                        .map(viewStats -> new ViewStats(viewStats.getApp(), viewStats.getUri(), viewStats.getHits()))
-                        .collect(Collectors.toList());
+                return statRepository.findStatsForAll(start, end);
             }
         } else {
             if (Boolean.TRUE.equals(unique)) {
-                return statRepository.findUniqueStats(startTimeFormat, endTimeFormat, uris).stream()
-                        .map(viewStats -> new ViewStats(viewStats.getApp(), viewStats.getUri(), viewStats.getHits()))
-                        .collect(Collectors.toList());
+                return statRepository.findUniqueStats(start, end, uris);
             } else {
-                return statRepository.findStats(startTimeFormat, endTimeFormat, uris).stream()
-                        .map(viewStats -> new ViewStats(viewStats.getApp(), viewStats.getUri(), viewStats.getHits()))
-                        .collect(Collectors.toList());
+                return statRepository.findStats(start, end, uris);
             }
         }
     }

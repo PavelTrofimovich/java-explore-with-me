@@ -3,14 +3,12 @@ package ru.yandex.practicum.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.ViewStats;
 import ru.yandex.practicum.model.EndpointHit;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public interface StatsRepository extends JpaRepository<EndpointHit, Integer> {
     @Query("SELECT NEW ru.yandex.practicum.ViewStats(H.app, H.uri, COUNT (H.ip) AS hits) " +
             "FROM ru.yandex.practicum.model.EndpointHit AS H " +
